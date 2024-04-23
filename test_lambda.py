@@ -13,7 +13,7 @@ expr = left(alt(func, appl, atom))
 
 
 def test():
-    x = 'λb. λg. λa.b( ga)'
+    x = 'λb. λg. λa.b( ga)'.strip()
     y = (('func', 'b', ('func', 'g', ('func', 'a', ('apply', 'b', ('apply', 'g', 'a'))))),)
     s = parse(x, expr)
     assert s.ok and s.stack == y
