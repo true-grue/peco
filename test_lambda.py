@@ -1,19 +1,21 @@
 from peco import *
 
-expr = lambda s: expr(s)
 ws = many(space)
+expr = lambda s: expr(s)
+tok = lambda f: memo(seq(ws, f))
+skip = lambda c: tok(sym(c))
 
-atom = seq(cite(letter), to(lambda x: x))
-func = seq(sym('λ'), ws, atom, ws, sym('.'), ws, expr,
+atom = tok(cite(letter))
+func = seq(skip('λ'), atom, skip('.'), expr,
            to(lambda arg, body: ('func', arg, body)))
 
-part = alt(seq(sym('('), ws, expr, ws, sym(')')), expr)
-appl = seq(part, ws, part, to(lambda a, b: ('apply', a, b)))
+part = alt(seq(skip('('), expr, skip(')')), expr)
+appl = seq(part, part, to(lambda a, b: ('apply', a, b)))
 expr = left(alt(func, appl, atom))
 
 
 def test():
-    x = 'λb. λg. λa.b( ga)'.strip()
+    x = ' λb. λg. λa.b( ga)  '
     y = (('func', 'b', ('func', 'g', ('func', 'a', ('apply', 'b', ('apply', 'g', 'a'))))),)
-    s = parse(x, expr)
+    s = parse(x, seq(expr, ws))
     assert s.ok and s.stack == y
