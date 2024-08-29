@@ -33,10 +33,9 @@ def alt(*funcs):
 
 def many(f):
     def parse(s):
-        while True:
-            if not (new_s := f(s)).ok:
-                return s
+        while (new_s := f(s)).ok:
             s = new_s
+        return s
     return parse
 
 
