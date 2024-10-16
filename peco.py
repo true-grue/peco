@@ -1,15 +1,17 @@
+import re
 from collections import namedtuple
 
 State = namedtuple('State', 'data pos ok stack glob')
 
 
-def eat(f, size=1):
+def eat(expr):
+    code = re.compile(expr)
     def parse(s):
-        new_pos = s.pos + size
-        if new_pos <= len(s.data) and f(s.data[s.pos:new_pos]):
-            s.glob['pos'] = max(s.glob['pos'], new_pos)
-            return s._replace(pos=new_pos)
-        return s._replace(ok=False)
+        if (m := code.match(s.data[s.pos:])) is None:
+            return s._replace(ok=False)
+        pos = s.pos + len(m.group())
+        s.glob['err_pos'] = max(s.glob['err_pos'], pos)
+        return s._replace(pos=pos)
     return parse
 
 
@@ -102,19 +104,11 @@ def left(f):
 
 
 def parse(data, f):
-    s = f(State(data, 0, True, (), dict(tab={}, pos=0)))
+    s = f(State(data, 0, True, (), dict(tab={}, err_pos=0)))
     return s._replace(ok=s.ok and s.pos == len(s.data))
 
 
-sym = lambda x: eat(lambda y: x == y, len(x))
-dot = eat(lambda _: True)
-space = eat(str.isspace)
-digit = eat(str.isdigit)
-letter = eat(str.isalpha)
-one_of = lambda chars: eat(lambda c: c in chars)
-range_of = lambda a, b: eat(lambda c: a <= c <= b)
 empty = lambda s: s
 opt = lambda f: alt(f, empty)
 some = lambda f: seq(f, many(f))
-non = lambda f: seq(npeek(f), dot)
 list_of = lambda f, d: seq(f, many(seq(d, f)))
