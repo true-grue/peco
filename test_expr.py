@@ -1,16 +1,16 @@
 from peco import *
 
 ws = eat(r'\s*')
-tok = lambda f: memo(seq(ws, f))
-skip = lambda c: tok(eat(c))
+scan = lambda f: memo(seq(ws, f))
+skip = lambda c: scan(eat(c))
+tok = lambda c: scan(cite(eat(c)))
 
 mkvar = to(lambda x: ('var', x))
 mknum = to(lambda x: ('num', x))
 mkbop = to(lambda a, o, b: (o, a, b))
 
-var = seq(tok(cite(eat(r'[a-zA-Z][a-zA-Z0-9]*'))), mkvar)
-num = seq(tok(cite(eat(r'\d+'))), mknum)
-op = lambda c: tok(cite(eat(c)))
+var = seq(tok(r'[a-zA-Z][a-zA-Z0-9]*'), mkvar)
+num = seq(tok(r'\d+'), mknum)
 
 expr = lambda s: expr(s)
 term = lambda s: term(s)
@@ -22,14 +22,14 @@ factor = alt(
 )
 
 expr = left(alt(
-    seq(expr, op(r'\+'), term, mkbop),
-    seq(expr, op(r'-'), term, mkbop),
+    seq(expr, tok(r'\+'), term, mkbop),
+    seq(expr, tok(r'-'), term, mkbop),
     term
 ))
 
 term = left(alt(
-    seq(term, op(r'\*'), factor, mkbop),
-    seq(term, op(r'/'), factor, mkbop),
+    seq(term, tok(r'\*'), factor, mkbop),
+    seq(term, tok(r'/'), factor, mkbop),
     factor
 ))
 
