@@ -6,7 +6,7 @@ mkfalse = to(lambda: False)
 mknone = to(lambda: None)
 mkobj = to(lambda x: dict(x))
 
-ws = many(eat(r'\s+'))
+ws = eat(r'\s*')
 scan = lambda f: memo(seq(ws, f))
 skip = lambda c: scan(eat(c))
 

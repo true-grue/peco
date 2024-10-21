@@ -1,6 +1,6 @@
 from peco import *
 
-ws = many(eat(r'\s+'))
+ws = eat(r'\s*')
 scan = lambda f: memo(seq(ws, f))
 skip = lambda c: scan(eat(c))
 tok = lambda c: scan(cite(eat(c)))
