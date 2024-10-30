@@ -10,10 +10,10 @@ ws = eat(r'\s*')
 scan = lambda f: memo(seq(ws, f))
 skip = lambda c: scan(eat(c))
 
-number = seq(cite(eat(r'-?([1-9]\d+|0)(\.\d+)?((e|E)(-\+)*\d)?')), mknum)
+number = seq(push(eat(r'-?([1-9]\d+|0)(\.\d+)?((e|E)(-\+)*\d)?')), mknum)
 uXXXX = eat(r'u(\d|[a-f]|[A-F]){4}')
 escaped = seq(eat(r'\\'), alt(eat(r'["\\/bfnrt]'), uXXXX))
-string = seq(eat('"'), cite(many(alt(eat(r'[^"\\]'), escaped))), eat('"'))
+string = seq(eat('"'), push(many(alt(eat(r'[^"\\]'), escaped))), eat('"'))
 
 true = seq(skip('true'), mktrue)
 false = seq(skip('false'), mkfalse)

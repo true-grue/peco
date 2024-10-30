@@ -3,7 +3,7 @@ from peco import *
 ws = eat(r'\s*')
 scan = lambda f: memo(seq(ws, f))
 skip = lambda c: scan(eat(c))
-tok = lambda c: scan(cite(eat(c)))
+tok = lambda c: scan(push(eat(c)))
 
 mkfun = to(lambda arg, body: ('fun', arg, body))
 mkapp = to(lambda func, arg: ('app', func, arg))

@@ -1,7 +1,7 @@
 import re
 from collections import namedtuple
 
-State = namedtuple('State', 'data pos ok stack glob')
+State = namedtuple('State', 'data pos err ok stack tab')
 
 
 def eat(expr):
@@ -10,8 +10,7 @@ def eat(expr):
         if (m := code.match(s.data[s.pos:])) is None:
             return s._replace(ok=False)
         pos = s.pos + len(m.group())
-        s.glob['err_pos'] = max(s.glob['err_pos'], pos)
-        return s._replace(pos=pos)
+        return s._replace(pos=pos, err=max(s.err, pos))
     return parse
 
 
@@ -41,7 +40,7 @@ def many(f):
     return parse
 
 
-def cite(f):
+def push(f):
     def parse(s):
         pos = s.pos
         if not (s := f(s)).ok:
@@ -83,28 +82,26 @@ def npeek(f):
 def memo(f):
     def parse(s):
         key = f, s.pos
-        tab = s.glob['tab']
-        if key not in tab:
-            tab[key] = f(s)
-        return tab[key]
+        if key not in s.tab:
+            s.tab[key] = f(s)
+        return s.tab[key]
     return parse
 
 
 def left(f):
     def parse(s):
         key = f, s.pos
-        tab = s.glob['tab']
-        if key not in tab:
-            tab[key] = s._replace(ok=False)
+        if key not in s.tab:
+            s.tab[key] = s._replace(ok=False)
             pos = s.pos
-            while (s := f(s._replace(pos=pos))).pos > tab[key].pos:
-                tab[key] = s
-        return tab[key]
+            while (s := f(s._replace(pos=pos))).pos > s.tab[key].pos:
+                s.tab[key] = s
+        return s.tab[key]
     return parse
 
 
 def parse(data, f):
-    s = f(State(data, 0, True, (), dict(tab={}, err_pos=0)))
+    s = f(State(data, 0, 0, True, (), {}))
     return s._replace(ok=s.ok and s.pos == len(s.data))
 
 

@@ -8,7 +8,7 @@ mkobj = to(lambda o: dict(o))
 ws = many(eat(r'\s+|#.+'))
 scan = lambda f: memo(seq(ws, f))
 skip = lambda c: scan(eat(c))
-tok = lambda c: scan(cite(eat(c)))
+tok = lambda c: scan(push(eat(c)))
 
 num = seq(tok(r'[-+]?\d+'), mknum)
 string = seq(tok(r'"[^"]*"'), mkstr)
