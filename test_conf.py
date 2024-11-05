@@ -6,9 +6,9 @@ mkarr = to(lambda a: list(a))
 mkobj = to(lambda o: dict(o))
 
 ws = many(eat(r'\s+|#.+'))
-scan = lambda f: memo(seq(ws, f))
-skip = lambda c: scan(eat(c))
-tok = lambda c: scan(push(eat(c)))
+token = lambda f: memo(seq(ws, f))
+tok = lambda c: token(push(eat(c)))
+skip = lambda c: token(eat(c))
 
 num = seq(tok(r'[-+]?\d+'), mknum)
 string = seq(tok(r'"[^"]*"'), mkstr)

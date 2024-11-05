@@ -1,9 +1,9 @@
 from peco import *
 
 ws = eat(r'\s*')
-scan = lambda f: memo(seq(ws, f))
-skip = lambda c: scan(eat(c))
-tok = lambda c: scan(push(eat(c)))
+token = lambda f: memo(seq(ws, f))
+tok = lambda c: token(push(eat(c)))
+skip = lambda c: token(eat(c))
 
 mkfun = to(lambda arg, body: ('fun', arg, body))
 mkapp = to(lambda func, arg: ('app', func, arg))

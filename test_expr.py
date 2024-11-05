@@ -1,9 +1,9 @@
 from peco import *
 
 ws = eat(r'\s*')
-scan = lambda f: memo(seq(ws, f))
-skip = lambda c: scan(eat(c))
-tok = lambda c: scan(push(eat(c)))
+token = lambda f: memo(seq(ws, f))
+tok = lambda c: token(push(eat(c)))
+skip = lambda c: token(eat(c))
 
 mkvar = to(lambda x: ('var', x))
 mknum = to(lambda x: ('num', x))
@@ -45,4 +45,4 @@ def test():
     err_x = '(b*b - 3* a*c )) + a'
     err_y = '               ^'
     s = parse(err_x, main)
-    assert not s.ok and ' ' * s.err + '^' == err_y
+    assert not s.ok and ' ' * s.glob['err'] + '^' == err_y
