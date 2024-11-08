@@ -52,7 +52,6 @@ def push(f):
 
 def to(f):
     n = f.__code__.co_argcount
-
     def parse(s):
         pos = len(s.stack) - n
         return s._replace(stack=s.stack[:pos] + (f(*s.stack[pos:]),))
