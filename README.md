@@ -12,7 +12,7 @@ Main features:
 * Selective memoization to speed up parsing (see `memo`).
 * Left recursion is supported (see `left`).
 
-Combinator functions take and return the parse state. The `state: namedtuple` has the following fields:
+Combinator functions generate parsers that take and return parsing state. The `state: namedtuple` has the following fields:
 
 * `text: str`. Source text.
 * `pos: int`. Position in the `text`.
