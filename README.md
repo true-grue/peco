@@ -15,7 +15,7 @@ Main features:
 Combinator functions take and return the parse state. The `state: namedtuple` has the following fields:
 
 * `text: str`. Source text.
-* `pos: int`. Position in the text.
+* `pos: int`. Position in the `text`.
 * `ok: bool`. Parsing result.
 * `stack: tuple`. Result of semantic actions.
 * `glob: dict`. Contains the error position field (`err`).
