@@ -1,11 +1,13 @@
+# Author: Peter Sovietov
 import re
 from collections import namedtuple
 
-State = namedtuple('State', 'text pos ok stack glob')
+Peco = namedtuple('Peco', 'text pos ok stack glob')
 
 
 def eat(expr):
     code = re.compile(expr)
+
     def parse(s):
         if (m := code.match(s.text[s.pos:])) is None:
             return s._replace(ok=False)
@@ -52,6 +54,7 @@ def push(f):
 
 def to(f):
     n = f.__code__.co_argcount
+
     def parse(s):
         pos = len(s.stack) - n
         return s._replace(stack=s.stack[:pos] + (f(*s.stack[pos:]),))
@@ -103,7 +106,7 @@ def left(f):
 
 
 def parse(text, f):
-    s = f(State(text, 0, True, (), dict(err=0, tab={})))
+    s = f(Peco(text, 0, True, (), dict(err=0, tab={})))
     return s._replace(ok=s.ok and s.pos == len(s.text))
 
 
