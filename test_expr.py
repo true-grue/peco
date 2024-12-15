@@ -38,7 +38,7 @@ main = seq(expr, ws)
 
 def test():
     x = '  (foo+ bar)*4 - (12/ a) '
-    y = (('-', ('*', ('+', ('var', 'foo'), ('var', 'bar')), ('num', '4')),
+    y = Stack(('-', ('*', ('+', ('var', 'foo'), ('var', 'bar')), ('num', '4')),
          ('/', ('num', '12'), ('var', 'a'))),)
     s = parse(x, main)
     assert s.ok and s.stack == y

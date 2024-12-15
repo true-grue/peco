@@ -31,7 +31,7 @@ json = seq(alt(obj, array), ws)
 def test():
     x = '{ "Object":{"Zoom": false, "Property1":{"Property2":' \
         '{"Color":[0,153,255,-0]},"Width":40}} }'
-    y = ({'Object': {'Zoom': False, 'Property1': {'Property2': {'Color':
-         (0.0, 153.0, 255.0, -0.0)}, 'Width': 40.0}}},)
+    y = Stack({'Object': {'Zoom': False, 'Property1': {'Property2': {'Color':
+         (0.0, 153.0, 255.0, -0.0)}, 'Width': 40.0}}}, None)
     s = parse(x, json)
     assert s.ok and s.stack == y

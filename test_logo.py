@@ -7,7 +7,7 @@ def get_loc(text, pos):
     return line, col
 
 
-when = lambda f: lambda s: s._replace(ok=f(s.stack[-1]))
+when = lambda f: lambda s: s._replace(ok=f(s.stack.car))
 
 mkmove = to(lambda m, x: (m, x))
 mkpen = to(lambda m: (m,))
@@ -47,7 +47,7 @@ def test():
     star
     '''
     s = parse(src, main)
-    result = (('block',
+    result = Stack(('block',
                (('func',
                  'star',
                  ('block',

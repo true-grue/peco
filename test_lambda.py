@@ -19,7 +19,7 @@ expr = left(alt(func, appl, atom, pars))
 
 def test():
     x = ' λb. λg. (λa.b g(a))  '
-    y = (('fun', 'b',
+    y = Stack(('fun', 'b',
           ('fun', 'g',
            ('fun', 'a',
             ('app', 'b',

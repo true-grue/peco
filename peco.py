@@ -2,7 +2,38 @@
 import re
 from collections import namedtuple
 
+__all__ = 'Peco Stack eat seq alt many push to group peek npeek memo left ' \
+		  'parse empty opt some list_of'.split()
+
 Peco = namedtuple('Peco', 'text pos ok stack glob')
+
+Stack = namedtuple('Stack', 'car cdr', defaults=(None,))
+
+def _till(stack, till):
+    if stack == till:
+        return ()
+    if stack.cdr == till:
+        return (stack.car,)
+    acc = []
+    while stack != till:
+        acc.append(stack.car)
+        stack = stack.cdr
+    acc.reverse()
+    return tuple(acc)
+
+
+def _split(stack, n):
+    if n == 0:
+        return (), stack
+    if n == 1:
+        return (stack.car,), stack.cdr
+    acc = []
+    while n > 0:
+        acc.append(stack.car)
+        stack = stack.cdr
+        n -= 1
+    acc.reverse()
+    return tuple(acc), stack
 
 
 def eat(expr):
@@ -48,7 +79,7 @@ def push(f):
         pos = s.pos
         if not (s := f(s)).ok:
             return s
-        return s._replace(stack=s.stack + (s.text[pos:s.pos],))
+        return s._replace(stack=Stack(s.text[pos:s.pos], s.stack))
     return parse
 
 
@@ -56,8 +87,8 @@ def to(f):
     n = f.__code__.co_argcount
 
     def parse(s):
-        pos = len(s.stack) - n
-        return s._replace(stack=s.stack[:pos] + (f(*s.stack[pos:]),))
+        args, stack = _split(s.stack, n)
+        return s._replace(stack=Stack(f(*args), stack))
     return parse
 
 
@@ -66,7 +97,8 @@ def group(f):
         stack = s.stack
         if not (s := f(s)).ok:
             return s
-        return s._replace(stack=stack + (s.stack[len(stack):],))
+        grp = _till(s.stack, stack)
+        return s._replace(stack=Stack(grp, stack))
     return parse
 
 
@@ -107,7 +139,7 @@ def left(f):
 
 def parse(text, f, **kwargs):
     glob = dict(err=0, tab={}) | (kwargs or {})
-    s = f(Peco(text, 0, True, (), glob))
+    s = f(Peco(text, 0, True, None, glob))
     return s._replace(ok=s.ok and s.pos == len(s.text))
 
 

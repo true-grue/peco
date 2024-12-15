@@ -37,7 +37,7 @@ def test():
     }
     log = "conf.log"
     '''
-    obj = ({'vm': {'ip': [192.0, 168.0, 44.0, 44.0], 'memory': 1024.0,
+    obj = Stack({'vm': {'ip': [192.0, 168.0, 44.0, 44.0], 'memory': 1024.0,
            'synced_folders': [{'host_path': 'data/', 'guest_path': '/var/www',
            'type': 'default'}]}, 'log': 'conf.log'},)
     s = parse(src, main)
