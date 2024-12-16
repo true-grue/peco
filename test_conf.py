@@ -39,6 +39,6 @@ def test():
     '''
     obj = ({'vm': {'ip': [192.0, 168.0, 44.0, 44.0], 'memory': 1024.0,
            'synced_folders': [{'host_path': 'data/', 'guest_path': '/var/www',
-           'type': 'default'}]}, 'log': 'conf.log'},)
+           'type': 'default'}]}, 'log': 'conf.log'}, None)
     s = parse(src, main)
     assert s.ok and s.stack == obj

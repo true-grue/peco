@@ -7,7 +7,7 @@ def get_loc(text, pos):
     return line, col
 
 
-when = lambda f: lambda s: s._replace(ok=f(s.stack[-1]))
+when = lambda f: lambda s: s._replace(ok=f(head(s.stack)))
 
 mkmove = to(lambda m, x: (m, x))
 mkpen = to(lambda m: (m,))
@@ -56,7 +56,7 @@ def test():
                     ('block',
                      (('fd', 100.0),
                       ('rt', 144.0)))),))),
-                ('call', 'star'))),)
+                ('call', 'star'))), None)
     assert s.ok and s.stack == result
     err = '''
     to center_top

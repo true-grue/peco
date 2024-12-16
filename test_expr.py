@@ -39,7 +39,7 @@ main = seq(expr, ws)
 def test():
     x = '  (foo+ bar)*4 - (12/ a) '
     y = (('-', ('*', ('+', ('var', 'foo'), ('var', 'bar')), ('num', '4')),
-         ('/', ('num', '12'), ('var', 'a'))),)
+         ('/', ('num', '12'), ('var', 'a'))), None)
     s = parse(x, main)
     assert s.ok and s.stack == y
     err_x = '(b*b - 3* a*c )) + a'

@@ -4,6 +4,9 @@ from collections import namedtuple
 
 Peco = namedtuple('Peco', 'text pos ok stack glob')
 
+head = lambda p: p[0]
+tail = lambda p: p[1]
+
 
 def eat(expr):
     code = re.compile(expr)
@@ -48,17 +51,31 @@ def push(f):
         pos = s.pos
         if not (s := f(s)).ok:
             return s
-        return s._replace(stack=s.stack + (s.text[pos:s.pos],))
+        return s._replace(stack=(s.text[pos:s.pos], s.stack))
     return parse
+
+
+def get_args(st, n):
+    args = [None] * n
+    for i in range(n):
+        args[n - 1 - i], st = head(st), tail(st)
+    return tuple(args), st
 
 
 def to(f):
     n = f.__code__.co_argcount
 
     def parse(s):
-        pos = len(s.stack) - n
-        return s._replace(stack=s.stack[:pos] + (f(*s.stack[pos:]),))
+        args, st = get_args(s.stack, n)
+        return s._replace(stack=(f(*args), st))
     return parse
+
+
+def get_depth(old_st, st):
+    d = 0
+    while st != old_st:
+        d, st = d + 1, tail(st)
+    return d
 
 
 def group(f):
@@ -66,7 +83,7 @@ def group(f):
         stack = s.stack
         if not (s := f(s)).ok:
             return s
-        return s._replace(stack=stack + (s.stack[len(stack):],))
+        return s._replace(stack=get_args(s.stack, get_depth(stack, s.stack)))
     return parse
 
 
@@ -105,10 +122,12 @@ def left(f):
     return parse
 
 
-def parse(text, f, **kwargs):
-    glob = dict(err=0, tab={}) | (kwargs or {})
-    s = f(Peco(text, 0, True, (), glob))
+def eof(s):
     return s._replace(ok=s.ok and s.pos == len(s.text))
+
+
+def parse(text, f):
+    return eof(f(Peco(text, 0, True, None, dict(err=0, tab={}))))
 
 
 empty = lambda s: s

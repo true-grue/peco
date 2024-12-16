@@ -23,6 +23,6 @@ def test():
           ('fun', 'g',
            ('fun', 'a',
             ('app', 'b',
-             ('app', 'g', 'a'))))),)
+             ('app', 'g', 'a'))))), None)
     s = parse(x, seq(expr, ws))
     assert s.ok and s.stack == y
