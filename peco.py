@@ -9,7 +9,7 @@ def eat(expr):
     code = re.compile(expr)
 
     def parse(s):
-        if (m := code.match(s.text[s.pos:])) is None:
+        if (m := code.match(s.text, s.pos)) is None:
             return s._replace(ok=False)
         pos = s.pos + len(m.group())
         s.glob['err'] = max(s.glob['err'], pos)
