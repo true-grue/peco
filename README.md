@@ -4,7 +4,7 @@ This is a tiny parser combinator library written in Python.
 
 Main features:
 
-* Implementation in less than 100 lines of code.
+* Implementation in 100 lines of code.
 * No installation need, just add peco.py to your project.
 * Combined lexical and syntactic parsing using the PEG formalism.
 * Lexical rules use regular expressions (see `eat`).
