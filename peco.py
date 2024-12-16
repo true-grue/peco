@@ -105,8 +105,9 @@ def left(f):
     return parse
 
 
-def parse(text, f):
-    s = f(Peco(text, 0, True, (), dict(err=0, tab={})))
+def parse(text, f, **kwargs):
+    glob = dict(err=0, tab={}) | (kwargs or {})
+    s = f(Peco(text, 0, True, (), glob))
     return s._replace(ok=s.ok and s.pos == len(s.text))
 
 

@@ -35,5 +35,6 @@ Support for semantic actions:
 
 * `push(f)`. Loads a text fragment parsed by the `f` combinator into `stack`.
 * `to(f)`. Takes `n` elements from `stack` and passes them as arguments to the `f` function with arity `n`. The result of `f` is pushed into `stack`.
+* `group(f)`. Combines all elements placed on `stack` by `f` into a single tuple.
 
 For examples of using peco's combinators, see the tests.
