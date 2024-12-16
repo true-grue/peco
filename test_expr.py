@@ -16,20 +16,20 @@ expr = lambda s: expr(s)
 term = lambda s: term(s)
 
 factor = alt(
-    seq(skip(r'\('), expr, skip(r'\)')),
+    seq(skip(r'\('), cut, expr, skip(r'\)')),
     var,
     num
 )
 
 expr = left(alt(
-    seq(expr, tok(r'\+'), term, mkbop),
-    seq(expr, tok(r'-'), term, mkbop),
+    seq(expr, tok(r'\+'), cut, term, mkbop),
+    seq(expr, tok(r'-'), cut, term, mkbop),
     term
 ))
 
 term = left(alt(
-    seq(term, tok(r'\*'), factor, mkbop),
-    seq(term, tok(r'/'), factor, mkbop),
+    seq(term, tok(r'\*'), cut, factor, mkbop),
+    seq(term, tok(r'/'), cut, factor, mkbop),
     factor
 ))
 
@@ -39,7 +39,7 @@ main = seq(expr, ws)
 def test():
     x = '  (foo+ bar)*4 - (12/ a) '
     y = (('-', ('*', ('+', ('var', 'foo'), ('var', 'bar')), ('num', '4')),
-         ('/', ('num', '12'), ('var', 'a'))), None)
+         ('/', ('num', '12'), ('var', 'a'))),None)
     s = parse(x, main)
     assert s.ok and s.stack == y
     err_x = '(b*b - 3* a*c )) + a'

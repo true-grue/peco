@@ -15,9 +15,9 @@ string = seq(tok(r'"[^"]*"'), mkstr)
 name = tok(r'[_a-zA-Z][_a-zA-Z0-9]*')
 
 val = lambda s: val(s)
-array = seq(skip(r'\['), group(many(val)), skip(r'\]'), mkarr)
+array = seq(skip(r'\['), cut, group(many(val)), skip(r'\]'), mkarr)
 item = group(seq(name, skip(r'='), val))
-obj = seq(skip(r'{'), group(many(item)), skip(r'}'), mkobj)
+obj = seq(skip(r'{'), cut, group(many(item)), skip(r'}'), mkobj)
 val = alt(num, string, array, obj)
 
 main = seq(group(many(item)), ws, mkobj)
