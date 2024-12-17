@@ -4,9 +4,6 @@ from collections import namedtuple
 
 Peco = namedtuple('Peco', 'text pos ok stack glob')
 
-head = lambda p: p[0]
-tail = lambda p: p[1]
-
 
 def eat(expr):
     code = re.compile(expr)
@@ -14,9 +11,8 @@ def eat(expr):
     def parse(s):
         if (m := code.match(s.text, s.pos)) is None:
             return s._replace(ok=False)
-        pos = s.pos + len(m.group())
-        s.glob['err'] = max(s.glob['err'], pos)
-        return s._replace(pos=pos)
+        s.glob['err'] = max(s.glob['err'], m.end())
+        return s._replace(pos=m.end())
     return parse
 
 
@@ -57,8 +53,8 @@ def push(f):
 
 def get_args(st, n):
     args = [None] * n
-    for i in range(n):
-        args[n - 1 - i], st = head(st), tail(st)
+    for i in range(n - 1, -1, -1):
+        args[i], st = st
     return tuple(args), st
 
 
@@ -74,7 +70,8 @@ def to(f):
 def get_depth(old_st, st):
     d = 0
     while st != old_st:
-        d, st = d + 1, tail(st)
+        _, st = st
+        d += 1
     return d
 
 
@@ -123,13 +120,14 @@ def left(f):
 
 
 def eof(s):
-    return s._replace(ok=s.ok and s.pos == len(s.text))
+    return s._replace(ok=s.pos == len(s.text))
 
 
-def parse(text, f):
-    return eof(f(Peco(text, 0, True, None, dict(err=0, tab={}))))
+def peco(text):
+    return Peco(text, 0, True, None, dict(err=0, tab={}))
 
 
+parse = lambda text, f: seq(f, eof)(peco(text))
 empty = lambda s: s
 opt = lambda f: alt(f, empty)
 some = lambda f: seq(f, many(f))
