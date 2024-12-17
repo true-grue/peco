@@ -27,11 +27,18 @@ def seq(*funcs):
 
 def alt(*funcs):
     def parse(s):
+        oldcut, s.glob['cut'] = s.glob['cut'], False
         for f in funcs:
-            if (new_s := f(s)).ok:
-                return new_s
+            if (new_s := f(s)).ok or new_s.glob['cut']:
+                break
+        new_s.glob['cut'] = oldcut
         return new_s
     return parse
+
+
+def cut(s):
+    s.glob['cut'] = True
+    return s
 
 
 def many(f):
@@ -125,7 +132,7 @@ def eof(s):
 
 
 def peco(text):
-    return Peco(text, 0, True, None, dict(err=0, tab={}, alive=[]))
+    return Peco(text, 0, True, None, dict(err=0, tab={}, alive=[], cut=False))
 
 
 parse = lambda text, f: seq(f, eof)(peco(text))

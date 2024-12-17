@@ -10,11 +10,11 @@ mkapp = to(lambda func, arg: ('app', func, arg))
 
 expr = lambda s: expr(s)
 atom = tok(r'[a-zA-Z]')
-func = seq(skip('λ'), atom, skip('.'), expr, mkfun)
-appl = seq(expr, expr, mkapp)
+func = seq(skip('λ'), cut, atom, skip('.'), expr, mkfun)
+appl = seq(expr, cut, expr, mkapp)
 
-pars = seq(skip(r'\('), expr, skip(r'\)'))
-expr = left(alt(func, appl, atom, pars))
+pars = seq(skip(r'\('), cut, expr, skip(r'\)'))
+expr = left(alt(func, pars, appl, atom))
 
 
 def test():
