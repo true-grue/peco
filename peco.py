@@ -77,10 +77,10 @@ def get_depth(old_st, st):
 
 def group(f):
     def parse(s):
-        stack = s.stack
+        st = s.stack
         if not (s := f(s)).ok:
             return s
-        return s._replace(stack=get_args(s.stack, get_depth(stack, s.stack)))
+        return s._replace(stack=get_args(s.stack, get_depth(st, s.stack)))
     return parse
 
 
@@ -98,9 +98,10 @@ def npeek(f):
 
 def memo(f):
     def parse(s):
-        key = f, s.pos
+        key = f, s.pos, id(s.stack)
         tab = s.glob['tab']
         if key not in tab:
+            s.glob['alive'].append(s.stack)
             tab[key] = f(s)
         return tab[key]
     return parse
@@ -108,13 +109,13 @@ def memo(f):
 
 def left(f):
     def parse(s):
-        key = f, s.pos
+        key = f, s.pos, id(s.stack)
         tab = s.glob['tab']
         if key not in tab:
+            s.glob['alive'].append(s.stack)
             tab[key] = s._replace(ok=False)
-            pos = s.pos
-            while (s := f(s._replace(pos=pos))).pos > tab[key].pos:
-                tab[key] = s
+            while (new_s := f(s)).pos > tab[key].pos:
+                tab[key] = new_s
         return tab[key]
     return parse
 
@@ -124,7 +125,7 @@ def eof(s):
 
 
 def peco(text):
-    return Peco(text, 0, True, None, dict(err=0, tab={}))
+    return Peco(text, 0, True, None, dict(err=0, tab={}, alive=[]))
 
 
 parse = lambda text, f: seq(f, eof)(peco(text))
