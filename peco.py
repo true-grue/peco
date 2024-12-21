@@ -98,21 +98,20 @@ def npeek(f):
 
 def memo(f):
     def parse(s):
-        key = f, s.pos, id(s.stack)
-        tab = s.glob['tab']
-        if key not in tab:
-            s.glob['alive'].append(s.stack)
-            tab[key] = f(s)
-        return tab[key]
+        key = f, id(s)
+        if key not in s.glob['tab']:
+            s.glob['s'].append(s)
+            s.glob['tab'][key] = f(s)
+        return s.glob['tab'][key]
     return parse
 
 
 def left(f):
     def parse(s):
-        key = f, s.pos, id(s.stack)
+        key = f, id(s)
         tab = s.glob['tab']
         if key not in tab:
-            s.glob['alive'].append(s.stack)
+            s.glob['s'].append(s)
             tab[key] = s._replace(ok=False)
             while (new_s := f(s)).pos > tab[key].pos:
                 tab[key] = new_s
@@ -125,7 +124,7 @@ def eof(s):
 
 
 def peco(text):
-    return Peco(text, 0, True, None, dict(err=0, tab={}, alive=[]))
+    return Peco(text, 0, True, None, dict(err=0, tab={}, s=[]))
 
 
 parse = lambda text, f: seq(f, eof)(peco(text))
