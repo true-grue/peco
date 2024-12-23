@@ -1,20 +1,27 @@
 # Author: Peter Sovietov
-class Backtrack(Exception):
+from peco import alt as old_alt, seq
+
+
+class Cut(Exception):
     pass
 
 
-def back(f):
+def alt(*funcs):
+    f = old_alt(*funcs)
+
     def parse(s):
         try:
             return f(s)
-        except Backtrack:
+        except Cut:
             return s._replace(ok=False)
     return parse
 
 
-def track(f):
+def cut(*funcs):
+    f = seq(*funcs)
+
     def parse(s):
         if (s := f(s)).ok:
             return s
-        raise Backtrack
+        raise Cut
     return parse
