@@ -1,5 +1,5 @@
 from peco import *
-from backtrack import back, track
+from cut import alt, cut
 
 
 def get_loc(text, pos):
@@ -26,16 +26,15 @@ num = seq(tok(r'-?[0-9]+'), to(lambda x: float(x)))
 cmd = lambda s: cmd(s)
 block = lambda end: seq(group(many(seq(npeek(end), cmd))), end, mkblock)
 
-cmd = back(alt(
-    seq(tok('fd|bk|lt|rt'), track(num), mkmove),
+cmd = alt(
+    seq(tok('fd|bk|lt|rt'), cut(num), mkmove),
     seq(tok('pu|pd'), mkpen),
-    seq(skip('repeat'), track(seq(num, skip(r'\['), block(skip(r'\]')))),
-        mkrepeat),
-    seq(name, mkcall))
+    seq(skip('repeat'), cut(num, skip(r'\['), block(skip(r'\]'))), mkrepeat),
+    seq(name, mkcall)
 )
 
-func = seq(skip('to'), track(seq(name, block(skip('end')))), mkfunc)
-main = seq(group(many(back(alt(func, cmd)))), ws, mkblock)
+func = seq(skip('to'), cut(name, block(skip('end'))), mkfunc)
+main = seq(group(many(alt(func, cmd))), ws, mkblock)
 
 
 def test():
