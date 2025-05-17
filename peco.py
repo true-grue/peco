@@ -1,8 +1,14 @@
 # Author: Peter Sovietov
 import re
-from collections import namedtuple
+from typing import NamedTuple
 
-Peco = namedtuple('Peco', 'text pos ok stack glob')
+
+class Peco(NamedTuple):
+    text: str
+    pos: int
+    ok: bool
+    stack: tuple
+    glob: dict
 
 
 def eat(expr):
@@ -85,22 +91,20 @@ def group(f):
 
 
 def peek(f):
-    def parse(s):
-        return s._replace(ok=f(s).ok)
+    def parse(s): return s._replace(ok=f(s).ok)
     return parse
 
 
 def npeek(f):
-    def parse(s):
-        return s._replace(ok=not f(s).ok)
+    def parse(s): return s._replace(ok=not f(s).ok)
     return parse
 
 
 def memo(f):
     def parse(s):
-        key = f, id(s)
+        key = (f, id(s))
         if key not in s.glob['tab']:
-            s.glob['s'].append(s)
+            s.glob['_s'].append(s)
             s.glob['tab'][key] = f(s)
         return s.glob['tab'][key]
     return parse
@@ -108,10 +112,10 @@ def memo(f):
 
 def left(f):
     def parse(s):
-        key = f, id(s)
+        key = (f, id(s))
         tab = s.glob['tab']
         if key not in tab:
-            s.glob['s'].append(s)
+            s.glob['_s'].append(s)
             tab[key] = s._replace(ok=False)
             while (new_s := f(s)).pos > tab[key].pos:
                 tab[key] = new_s
@@ -119,16 +123,13 @@ def left(f):
     return parse
 
 
-def eof(s):
-    return s._replace(ok=s.pos == len(s.text))
-
-
 def peco(text):
-    return Peco(text, 0, True, None, dict(err=0, tab={}, s=[]))
+    return Peco(text, 0, True, None, dict(err=0, tab={}, _s=[]))
 
 
-parse = lambda text, f: seq(f, eof)(peco(text))
-empty = lambda s: s
-opt = lambda f: alt(f, empty)
-some = lambda f: seq(f, many(f))
-list_of = lambda f, d: seq(f, many(seq(d, f)))
+def eof(s): return s._replace(ok=s.pos == len(s.text))
+def parse(text, f): return seq(f, eof)(peco(text))
+def empty(s): return s
+def opt(f): return alt(f, empty)
+def some(f): return seq(f, many(f))
+def list_of(f, d): return seq(f, many(seq(d, f)))
