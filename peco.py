@@ -123,10 +123,7 @@ def left(f):
     return parse
 
 
-def peco(text):
-    return Peco(text, 0, True, None, dict(err=0, tab={}, _s=[]))
-
-
+def peco(text): return Peco(text, 0, True, None, dict(err=0, tab={}, _s=[]))
 def eof(s): return s._replace(ok=s.pos == len(s.text))
 def parse(text, f): return seq(f, eof)(peco(text))
 def empty(s): return s
