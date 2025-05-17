@@ -91,13 +91,11 @@ def group(f):
 
 
 def peek(f):
-    def parse(s): return s._replace(ok=f(s).ok)
-    return parse
+    return lambda s: s._replace(ok=f(s).ok)
 
 
 def npeek(f):
-    def parse(s): return s._replace(ok=not f(s).ok)
-    return parse
+    return lambda s: s._replace(ok=not f(s).ok)
 
 
 def memo(f):
