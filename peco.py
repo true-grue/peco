@@ -1,13 +1,13 @@
 # Author: Peter Sovietov
 import re
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 
 class Peco(NamedTuple):
     text: str
     pos: int
     ok: bool
-    stack: tuple
+    stack: Optional[tuple]
     glob: dict
 
 
@@ -36,7 +36,7 @@ def alt(*funcs):
         for f in funcs:
             if (new_s := f(s)).ok:
                 return new_s
-        return new_s
+        return new_s  # type: ignore
     return parse
 
 
