@@ -1,4 +1,4 @@
-from .peco import Combinator
+from peco import Combinator
 
 def alt(*funcs: Combinator) -> Combinator: ...
 
