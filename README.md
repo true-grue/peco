@@ -34,7 +34,7 @@ Most combinators follow PEG constructs:
 Support for semantic actions:
 
 * `push(f)`. Pushes a text fragment parsed by the `f` combinator onto the `stack`.
-* `to(f)`.  Pops `n` elements from the `stack` and passes them as arguments to function `f` with arity `n`; the result is pushed back onto the `stack`
-* `group(f)`. Combines all elements pushed onto the `stack` by `f` into a single tuple
+* `to(f)`.  Pops `n` elements from the `stack` and passes them as arguments to function `f` with arity `n`; the result is pushed back onto the `stack`.
+* `group(f)`. Combines all elements pushed onto the `stack` by `f` into a single tuple.
 
 For examples of using peco's combinators, see the tests.
