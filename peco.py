@@ -7,7 +7,7 @@ class Peco(NamedTuple):
     text: str
     pos: int
     ok: bool
-    stack: tuple
+    stack: tuple | None
     glob: dict
 
 
@@ -32,6 +32,8 @@ def seq(*funcs):
 
 
 def alt(*funcs):
+    new_s = None
+
     def parse(s):
         for f in funcs:
             if (new_s := f(s)).ok:
