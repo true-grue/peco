@@ -1,5 +1,5 @@
 from peco import *
-from cut import alt, cut
+from peco.cut import alt, cut
 
 
 def get_loc(text, pos):
