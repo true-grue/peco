@@ -2,7 +2,11 @@
 
 This is a tiny (100 LOC) parser combinator library in Python.
 
-No installation needed, just add peco.py to your project.
+Installation:
+
+```
+pip install pecolib
+```
 
 Main features:
 
